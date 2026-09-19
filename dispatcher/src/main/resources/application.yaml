@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: dispatcher
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: userok
+    password: p@ssw0rd
+
+telegram:
+  bot:
+    username: Soleniy_ogurecBot
+    token: ${TG_BOT_TOKEN}
+
+
+server:
+  port: 8081
+
+logging:
+  file:
+    path: ./logs
+    name: ${logging.file.path}/dispatcher.log
+  level:
+    root: debug
+

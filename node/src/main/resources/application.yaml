@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: dispatcher
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: userok
+    password: p@ssw0rd
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pogreb
+    username: userok
+    password: p@ssw0rd
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    generate-ddl: true
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+
+server:
+  port: 8082
+
+logging:
+  file:
+    path: ./logs
+    name: ${logging.file.path}/node.log
+  level:
+    root: debug
+
+telegram:
+  bot:
+    token: ${TG_BOT_TOKEN}
+  service:
+    file_info:
+      uri: https://api.telegram.org/bot{token}/getFile?file_id={fileId}
+    file_storage:
+      uri: https://api.telegram.org/file/bot{token}/{filePath}
