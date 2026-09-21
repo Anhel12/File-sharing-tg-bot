@@ -3,9 +3,11 @@ package com.example.service.impl;
 import com.example.dao.AppUserDao;
 import com.example.dao.RawDataDao;
 import com.example.entity.AppDocument;
+import com.example.entity.AppPhoto;
 import com.example.entity.AppUser;
 import com.example.entity.RawData;
 import com.example.entity.enums.UserState;
+import com.example.exceptions.BigFileException;
 import com.example.exceptions.UploadFileException;
 import com.example.service.FileService;
 import com.example.service.MainService;
@@ -44,7 +46,7 @@ public class MainServiceImpl implements MainService {
         if (CANCEL.equals(serviceCommand)) {
             output = cancelProcess(appUser);
         } else if (BASIC_STATE.equals(userState)) {
-            output = processServiceCommand(appUser, text);
+            output = processServiceCommand(appUser, serviceCommand);
         } else if (WAIT_FOR_EMAIL_STATE.equals(userState)) {
             //TODO Добавить обработку емайла
         } else {
@@ -75,6 +77,9 @@ public class MainServiceImpl implements MainService {
             log.error(String.valueOf(e));
             String error = "К сожалению, загрузка файла не удалась. Повторите попытку позже.";
             sendAnswer(error, chatId);
+        } catch (BigFileException e) {
+            String error = "К сожалению, ты пидр, отправивший большой файл. Повторите попытку позже.";
+            sendAnswer(error, chatId);
         }
     }
 
@@ -101,9 +106,17 @@ public class MainServiceImpl implements MainService {
             return;
         }
 
-        //TODO Добавить сохранения фото:)
-        var answer = "Фото успшено загружено! Ссылка для скачивания: http://text.ru/get-photo/777";
-        sendAnswer(answer, chatId);
+        try {
+            AppPhoto photo = fileService.processPhoto(update.getMessage());
+            //TODO Добавить генерацию ссылки для скачивания фото
+            var answer = "Фото успешно загружено! " +
+                    "Ссылка для скачивания: http://text.ru/get-photo/777";
+            sendAnswer(answer, chatId);
+        } catch (UploadFileException e) {
+            log.error(String.valueOf(e));
+            String error = "К сожалению, загрузка фото не удалась. Повторите попытку позже.";
+            sendAnswer(error, chatId);
+        }
     }
 
     private void sendAnswer(String output, Long chatId) {
@@ -113,7 +126,7 @@ public class MainServiceImpl implements MainService {
         producerService.producerAnswer(sendMessage);
     }
 
-    private String processServiceCommand(AppUser appUser, String cmd) {
+    private String processServiceCommand(AppUser appUser, ServiceCommands cmd) {
         if (REGISTRATION.equals(cmd)){
             //TODO добавить регистрацию
             return "Временно недоступно!";
