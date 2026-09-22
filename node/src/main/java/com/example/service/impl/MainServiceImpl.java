@@ -12,6 +12,7 @@ import com.example.exceptions.UploadFileException;
 import com.example.service.FileService;
 import com.example.service.MainService;
 import com.example.service.ProducerService;
+import com.example.service.enums.LinkType;
 import com.example.service.enums.ServiceCommands;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,9 +70,9 @@ public class MainServiceImpl implements MainService {
 
         try {
             AppDocument doc = fileService.processDoc(update.getMessage());
-            //TODO Добавить генерацию ссылки для скачивания документа
+            String link = fileService.generateLink(doc.getId(), LinkType.GET_DOC);
             var answer = "Документ успешно загружен! " +
-                    "Ссылка для скачивания: http://text.ru/get-doc/777";
+                    "Ссылка для скачивания: " + link;
             sendAnswer(answer, chatId);
         } catch (UploadFileException e) {
             log.error(String.valueOf(e));
@@ -79,6 +80,28 @@ public class MainServiceImpl implements MainService {
             sendAnswer(error, chatId);
         } catch (BigFileException e) {
             String error = "К сожалению, ты пидр, отправивший большой файл. Повторите попытку позже.";
+            sendAnswer(error, chatId);
+        }
+    }
+
+    @Override
+    public void processPhotoMessage(Update update) {
+        saveRawData(update);
+        var appUser = findOrSaveAppUser(update);
+        var chatId = update.getMessage().getChatId();
+        if(isNotAllowToSendContent(chatId, appUser)) {
+            return;
+        }
+
+        try {
+            AppPhoto photo = fileService.processPhoto(update.getMessage());
+            String link = fileService.generateLink(photo.getId(), LinkType.GET_PHOTO);
+            var answer = "Фото успешно загружено! " +
+                    "Ссылка для скачивания: " + link;
+            sendAnswer(answer, chatId);
+        } catch (UploadFileException e) {
+            log.error(String.valueOf(e));
+            String error = "К сожалению, загрузка фото не удалась. Повторите попытку позже.";
             sendAnswer(error, chatId);
         }
     }
@@ -95,28 +118,6 @@ public class MainServiceImpl implements MainService {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void processPhotoMessage(Update update) {
-        saveRawData(update);
-        var appUser = findOrSaveAppUser(update);
-        var chatId = update.getMessage().getChatId();
-        if(isNotAllowToSendContent(chatId, appUser)) {
-            return;
-        }
-
-        try {
-            AppPhoto photo = fileService.processPhoto(update.getMessage());
-            //TODO Добавить генерацию ссылки для скачивания фото
-            var answer = "Фото успешно загружено! " +
-                    "Ссылка для скачивания: http://text.ru/get-photo/777";
-            sendAnswer(answer, chatId);
-        } catch (UploadFileException e) {
-            log.error(String.valueOf(e));
-            String error = "К сожалению, загрузка фото не удалась. Повторите попытку позже.";
-            sendAnswer(error, chatId);
-        }
     }
 
     private void sendAnswer(String output, Long chatId) {

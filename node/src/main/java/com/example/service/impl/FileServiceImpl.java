@@ -9,6 +9,10 @@ import com.example.entity.BinaryContent;
 import com.example.exceptions.BigFileException;
 import com.example.exceptions.UploadFileException;
 import com.example.service.FileService;
+import com.example.service.enums.LinkType;
+import com.example.utils.CryptoTool;
+import com.example.utils.DocCryptoTool;
+import com.example.utils.PhotoCryptoTool;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -29,6 +33,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import static com.example.service.enums.LinkType.GET_DOC;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -39,10 +45,14 @@ public class FileServiceImpl implements FileService {
     private String fileInfoUri;
     @Value("${telegram.service.file_storage.uri}")
     private String fileStorageUri;
+    @Value("${link.address}")
+    private String linkAddress;
 
     private final AppDocumentDao appDocumentDao;
     private final AppPhotoDao appPhotoDao;
     private final BinaryContentDao binaryContentDao;
+    private final DocCryptoTool docCryptoTool;
+    private final PhotoCryptoTool photoCryptoTool;
 
     private static final long MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 МБ
 
@@ -68,8 +78,8 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public AppPhoto processPhoto(Message telegramMessage) {
-        //TODO щас только первое фото обрабатывается(если будет отправлено сразу несколько фото)
-        PhotoSize telegramPhoto = telegramMessage.getPhoto().getFirst();
+        int lastPhoto = telegramMessage.getPhoto().size() - 1;
+        PhotoSize telegramPhoto = telegramMessage.getPhoto().get(lastPhoto);
         String fileId = telegramPhoto.getFileId();
         ResponseEntity<String> response = getFilePath(fileId);
         if(response.getStatusCode() == HttpStatus.OK) {
@@ -145,5 +155,16 @@ public class FileServiceImpl implements FileService {
                 token,
                 fileId
         );
+    }
+
+    @Override
+    public String generateLink(Long fileId, LinkType linkType) {
+        String hash;
+        if(linkType.name().equals("GET_DOC")) {
+            hash = docCryptoTool.hashOf(fileId);
+        } else {
+            hash = photoCryptoTool.hashOf(fileId);
+        }
+        return "http://" + linkAddress + "/" + linkType + "?id=" + hash;
     }
 }

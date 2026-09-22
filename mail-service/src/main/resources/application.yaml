@@ -1,0 +1,20 @@
+server:
+  port: 8084
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    protocol: smtp
+    username: soleniyogurecbot@gmail.com
+    password: ${TG_BOT_EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+service:
+  activation:
+    uri: http://127.0.0.1:8084/mail/activation?id={id}

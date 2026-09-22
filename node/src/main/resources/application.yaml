@@ -1,6 +1,6 @@
 spring:
   application:
-    name: dispatcher
+    name: node
   rabbitmq:
     host: localhost
     port: 5672
@@ -39,3 +39,9 @@ telegram:
       uri: https://api.telegram.org/bot{token}/getFile?file_id={fileId}
     file_storage:
       uri: https://api.telegram.org/file/bot{token}/{filePath}
+
+link:
+  address: 127.0.0.1:8083
+salt:
+  doc: Dfda;sdkjfDFhasdfouefad234hF9Fl3h4f9s34rh
+  photo: DFHapet423ha;dfh934thsafg094tncv902hfsn3f
