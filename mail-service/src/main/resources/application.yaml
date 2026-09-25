@@ -17,4 +17,4 @@ spring:
 
 service:
   activation:
-    uri: http://127.0.0.1:8084/mail/activation?id={id}
+    uri: http://127.0.0.1:8083/user/activation?id={id}

@@ -9,6 +9,7 @@ import com.example.entity.RawData;
 import com.example.entity.enums.UserState;
 import com.example.exceptions.BigFileException;
 import com.example.exceptions.UploadFileException;
+import com.example.service.AppUserService;
 import com.example.service.FileService;
 import com.example.service.MainService;
 import com.example.service.ProducerService;
@@ -34,6 +35,7 @@ public class MainServiceImpl implements MainService {
     private final ProducerService producerService;
     private final AppUserDao appUserDao;
     private final FileService fileService;
+    private final AppUserService appUserService;
 
     @Override
     public void processTextMessage(Update update) {
@@ -49,7 +51,7 @@ public class MainServiceImpl implements MainService {
         } else if (BASIC_STATE.equals(userState)) {
             output = processServiceCommand(appUser, serviceCommand);
         } else if (WAIT_FOR_EMAIL_STATE.equals(userState)) {
-            //TODO Добавить обработку емайла
+            output = appUserService.setEmail(appUser, text);
         } else {
             log.error("Unknow user state: " + userState);
             output = "Неизвестная ошибка! Введите /cancel и попробуйте снова!";
@@ -79,7 +81,7 @@ public class MainServiceImpl implements MainService {
             String error = "К сожалению, загрузка файла не удалась. Повторите попытку позже.";
             sendAnswer(error, chatId);
         } catch (BigFileException e) {
-            String error = "К сожалению, ты пидр, отправивший большой файл. Повторите попытку позже.";
+            String error = "К сожалению, файл слишком большой. Повторите попытку позже.";
             sendAnswer(error, chatId);
         }
     }
@@ -129,15 +131,22 @@ public class MainServiceImpl implements MainService {
 
     private String processServiceCommand(AppUser appUser, ServiceCommands cmd) {
         if (REGISTRATION.equals(cmd)){
-            //TODO добавить регистрацию
-            return "Временно недоступно!";
+            return appUserService.registerUser(appUser);
         } else if (HELP.equals(cmd)){
             return help();
         } else if (START.equals(cmd)) {
             return "Привет! Чтобы посмотреть список доступных команд введите /help";
+        } else if(CHANGE.equals(cmd)) {
+            return changeEmail(appUser);
         } else {
             return "Неизвестная команда! Чтобы посмотреть список доступных команд введите /help";
         }
+    }
+
+    private String changeEmail(AppUser appUser) {
+        appUser.setEmail(null);
+        appUserDao.save(appUser);
+        return "Почта была удалена!\n" + appUserService.registerUser(appUser);
     }
 
     private String help() {
@@ -155,19 +164,19 @@ public class MainServiceImpl implements MainService {
     private AppUser findOrSaveAppUser(Update update){
         User telegramUser = update.getMessage().getFrom();
 
-        AppUser persistentAppUser = appUserDao.findAppUserByTelegramId(telegramUser.getId());
-        if(persistentAppUser == null) {
+        var optional = appUserDao.findByTelegramId(telegramUser.getId());
+        if(optional.isEmpty()) {
             AppUser transientAppUser = AppUser.builder()
                     .telegramId(telegramUser.getId())
                     .username(telegramUser.getUserName())
                     .firstName(telegramUser.getFirstName())
                     .lastName(telegramUser.getLastName())
-                    .isActive(true)
+                    .isActive(false)
                     .state(BASIC_STATE)
                     .build();
             return appUserDao.save(transientAppUser);
         }
-        return persistentAppUser;
+        return optional.get();
     }
 
     private void saveRawData(Update update) {

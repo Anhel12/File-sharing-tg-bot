@@ -18,6 +18,8 @@ repositories {
 
 dependencies {
     implementation 'org.hashids:hashids:1.0.3'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 }
 
 test {

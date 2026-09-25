@@ -9,7 +9,6 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: false
-    generate-ddl: true
     properties:
       hibernate:
         show_sql: true
@@ -28,3 +27,4 @@ logging:
 salt:
   doc: Dfda;sdkjfDFhasdfouefad234hF9Fl3h4f9s34rh
   photo: DFHapet423ha;dfh934thsafg094tncv902hfsn3f
+  user: LDfasephsdf;lhe;lkhasdfasdfiyapdfiasd90f87asdfhw349fysahf32rhadf

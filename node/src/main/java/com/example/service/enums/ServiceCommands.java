@@ -8,7 +8,8 @@ public enum ServiceCommands {
     HELP("/help"),
     REGISTRATION("/registration"),
     CANCEL("/cancel"),
-    START("/start");
+    START("/start"),
+    CHANGE("/changeemail");
     private final String value;
 
     @Override
