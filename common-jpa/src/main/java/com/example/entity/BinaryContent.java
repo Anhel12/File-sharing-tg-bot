@@ -12,6 +12,7 @@ import lombok.*;
 @Entity
 @Table(name = "binary_content")
 public class BinaryContent {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

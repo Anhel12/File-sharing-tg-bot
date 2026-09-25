@@ -19,7 +19,6 @@ repositories {
 }
 
 dependencies {
-    implementation project(':common-rabbitmq')
     implementation project(':common-jpa')
     implementation project(':common-utils')
 

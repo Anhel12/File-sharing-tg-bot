@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserActivationServiceImpl implements UserActivationService {
+
     private final AppUserDao appUserDao;
     private final UserCryptoTool userCryptoTool;
 

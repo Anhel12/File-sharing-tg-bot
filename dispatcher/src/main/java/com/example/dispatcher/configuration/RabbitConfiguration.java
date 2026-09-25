@@ -1,16 +1,26 @@
 package com.example.dispatcher.configuration;
 
-import org.checkerframework.checker.signature.qual.BinaryName;
+import lombok.Getter;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static com.example.commonrabbitmq.RabbitQueue.*;
-
+@Getter
 @Configuration
 public class RabbitConfiguration {
+
+    @Value("${spring.rabbitmq.queues.text-message-update}")
+    private String textMessageUpdate;
+    @Value("${spring.rabbitmq.queues.doc-message-update}")
+    private String docMessageUpdate;
+    @Value("${spring.rabbitmq.queues.photo-message-update}")
+    private String photoMessageUpdate;
+    @Value("${spring.rabbitmq.queues.answer-message}")
+    private String answerMessage;
+
     @Bean
     public MessageConverter jsonMessageConverter(){
         return new JacksonJsonMessageConverter();
@@ -18,21 +28,21 @@ public class RabbitConfiguration {
 
     @Bean
     public Queue textMessageQueue() {
-        return new Queue(TEXT_MESSAGE_UPDATE);
+        return new Queue(textMessageUpdate);
     }
 
     @Bean
     public Queue docMessageQueue() {
-        return new Queue(DOC_MESSAGE_UPDATE);
+        return new Queue(docMessageUpdate);
     }
 
     @Bean
     public Queue photoMessageQueue() {
-        return new Queue(PHOTO_MESSAGE_UPDATE);
+        return new Queue(photoMessageUpdate);
     }
 
     @Bean
     public Queue answerMessageQueue() {
-        return new Queue(ANSWER_MESSAGE);
+        return new Queue(answerMessage);
     }
 }

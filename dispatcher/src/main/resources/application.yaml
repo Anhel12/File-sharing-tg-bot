@@ -6,20 +6,28 @@ spring:
     port: 5672
     username: userok
     password: p@ssw0rd
+    queues:
+      doc-message-update: doc_message_update
+      photo-message-update: photo_message_update
+      text-message-update: text_message_update
+      answer-message: answer_message
 
 telegram:
   bot:
     username: Soleniy_ogurecBot
     token: ${TG_BOT_TOKEN}
+    uri: https://gurgling-confront-onshore.ngrok-free.dev
 
 
 server:
   port: 8081
+  ssl:
+    enabled: false
 
 logging:
   file:
     path: ./logs
     name: ${logging.file.path}/dispatcher.log
   level:
-    root: debug
+    root: warn
 

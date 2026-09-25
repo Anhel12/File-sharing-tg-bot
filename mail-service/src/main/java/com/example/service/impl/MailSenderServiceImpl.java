@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MailSenderServiceImpl implements MailSenderService {
+
     private final JavaMailSender javaMailSender;
     @Value("${spring.mail.username}")
     private String emailFrom;
@@ -23,7 +24,7 @@ public class MailSenderServiceImpl implements MailSenderService {
         var messageBody = getActivationMailBody(mailParams.getId());
         var emailTo = mailParams.getEmailTo();
 
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        var mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(emailFrom);
         mailMessage.setTo(emailTo);
         mailMessage.setSubject(subject);

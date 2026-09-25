@@ -14,6 +14,13 @@ spring:
           starttls:
             enable: true
             required: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: userok
+    password: p@ssw0rd
+    queues:
+      registration-mail: registration_mail
 
 service:
   activation:

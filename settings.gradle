@@ -1,5 +1,5 @@
 rootProject.name = 'File-sharing-tg-bot'
-include 'common-rabbitmq', 'dispatcher'
+include 'dispatcher'
 include 'node'
 include 'common-jpa'
 include 'rest-service'

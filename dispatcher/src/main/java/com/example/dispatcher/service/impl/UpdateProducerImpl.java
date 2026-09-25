@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Slf4j
 @RequiredArgsConstructor
 public class UpdateProducerImpl implements UpdateProducer {
+
     private final RabbitTemplate rabbitTemplate;
 
     @Override

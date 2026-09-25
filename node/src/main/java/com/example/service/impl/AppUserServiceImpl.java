@@ -6,23 +6,30 @@ import com.example.entity.AppUser;
 import com.example.entity.enums.UserState;
 import com.example.service.AppUserService;
 import com.example.utils.UserCryptoTool;
+
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
+@Service
 public class AppUserServiceImpl implements AppUserService {
+
     private final AppUserDao appUserDao;
     private final UserCryptoTool userCryptoTool;
+    private final RabbitTemplate rabbitTemplate;
     @Value("${telegram.service.mail.uri}")
     private String mailServiceUri;
+    @Value("${spring.rabbitmq.queues.registration-mail}")
+    private String registrationMailQueue;
 
     @Override
     public String registerUser(AppUser appUser) {
@@ -56,14 +63,7 @@ public class AppUserServiceImpl implements AppUserService {
             appUser = appUserDao.save(appUser);
 
             var cryptoUserId = userCryptoTool.hashOf(appUser.getId());
-            var response = sendRequestToMailService(cryptoUserId, email);
-            if(response.getStatusCode() != HttpStatus.OK) {
-                var msg = String.format("Отправка эл. письма на почту %s не удалась.", email);
-                log.error(msg);
-                appUser.setEmail(null);
-                appUserDao.save(appUser);
-                return msg;
-            }
+            sendRegistrationMail(cryptoUserId, email);
             return "Вам на почту было отправлено письмо. " +
                     "Перейдите по ссылке в письме для подтверждения регистрации. " +
                     "После подтверждения вы сможете загружать файлы для получения ссылок!";
@@ -73,18 +73,11 @@ public class AppUserServiceImpl implements AppUserService {
         }
     }
 
-    private ResponseEntity<String> sendRequestToMailService(String cryptoUserId, String email) {
-        var restTemplate = new RestTemplate();
-        var headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+    private void sendRegistrationMail(String cryptoUserId, String email) {
         var mailParams = MailParams.builder()
                 .id(cryptoUserId)
                 .emailTo(email)
                 .build();
-        var request = new HttpEntity<>(mailParams, headers);
-        return restTemplate.exchange(mailServiceUri,
-                HttpMethod.POST,
-                request,
-                String.class);
+        rabbitTemplate.convertAndSend(registrationMailQueue, mailParams);
     }
 }

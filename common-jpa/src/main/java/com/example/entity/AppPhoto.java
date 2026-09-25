@@ -5,13 +5,14 @@ import lombok.*;
 
 @Getter
 @Setter
+@EqualsAndHashCode(exclude = "id")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = "id")
 @Entity
 @Table(name = "app_photo")
 public class AppPhoto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

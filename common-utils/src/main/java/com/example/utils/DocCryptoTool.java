@@ -3,6 +3,7 @@ package com.example.utils;
 import org.hashids.Hashids;
 
 public class DocCryptoTool implements CryptoTool{
+
     private final Hashids hashids;
 
     public DocCryptoTool(String salt) {

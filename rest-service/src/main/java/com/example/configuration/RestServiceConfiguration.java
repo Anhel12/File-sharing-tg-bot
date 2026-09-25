@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RestServiceConfiguration {
+
     @Value("${salt.doc}")
     private String docSalt;
     @Value("${salt.photo}")

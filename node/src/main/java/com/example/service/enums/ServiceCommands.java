@@ -1,10 +1,10 @@
 package com.example.service.enums;
 
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 
 @RequiredArgsConstructor
 public enum ServiceCommands {
+
     HELP("/help"),
     REGISTRATION("/registration"),
     CANCEL("/cancel"),

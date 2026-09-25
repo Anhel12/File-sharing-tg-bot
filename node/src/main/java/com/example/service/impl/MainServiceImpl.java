@@ -2,22 +2,27 @@ package com.example.service.impl;
 
 import com.example.dao.AppUserDao;
 import com.example.dao.RawDataDao;
+
 import com.example.entity.AppDocument;
 import com.example.entity.AppPhoto;
 import com.example.entity.AppUser;
 import com.example.entity.RawData;
-import com.example.entity.enums.UserState;
+
 import com.example.exceptions.BigFileException;
 import com.example.exceptions.UploadFileException;
+
 import com.example.service.AppUserService;
 import com.example.service.FileService;
 import com.example.service.MainService;
 import com.example.service.ProducerService;
 import com.example.service.enums.LinkType;
 import com.example.service.enums.ServiceCommands;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
+
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -27,10 +32,11 @@ import static com.example.entity.enums.UserState.WAIT_FOR_EMAIL_STATE;
 import static com.example.service.enums.ServiceCommands.*;
 
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Service
 public class MainServiceImpl implements MainService {
+
     private final RawDataDao rawDataDao;
     private final ProducerService producerService;
     private final AppUserDao appUserDao;
@@ -71,17 +77,17 @@ public class MainServiceImpl implements MainService {
         }
 
         try {
-            AppDocument doc = fileService.processDoc(update.getMessage());
-            String link = fileService.generateLink(doc.getId(), LinkType.GET_DOC);
+            var doc = fileService.processDoc(update.getMessage());
+            var link = fileService.generateLink(doc.getId(), LinkType.GET_DOC);
             var answer = "Документ успешно загружен! " +
                     "Ссылка для скачивания: " + link;
             sendAnswer(answer, chatId);
         } catch (UploadFileException e) {
             log.error(String.valueOf(e));
-            String error = "К сожалению, загрузка файла не удалась. Повторите попытку позже.";
+            var error = "К сожалению, загрузка файла не удалась. Повторите попытку позже.";
             sendAnswer(error, chatId);
         } catch (BigFileException e) {
-            String error = "К сожалению, файл слишком большой. Повторите попытку позже.";
+            var error = "К сожалению, файл слишком большой. Повторите попытку позже.";
             sendAnswer(error, chatId);
         }
     }
@@ -96,14 +102,14 @@ public class MainServiceImpl implements MainService {
         }
 
         try {
-            AppPhoto photo = fileService.processPhoto(update.getMessage());
-            String link = fileService.generateLink(photo.getId(), LinkType.GET_PHOTO);
+            var photo = fileService.processPhoto(update.getMessage());
+            var link = fileService.generateLink(photo.getId(), LinkType.GET_PHOTO);
             var answer = "Фото успешно загружено! " +
                     "Ссылка для скачивания: " + link;
             sendAnswer(answer, chatId);
         } catch (UploadFileException e) {
             log.error(String.valueOf(e));
-            String error = "К сожалению, загрузка фото не удалась. Повторите попытку позже.";
+            var error = "К сожалению, загрузка фото не удалась. Повторите попытку позже.";
             sendAnswer(error, chatId);
         }
     }
@@ -162,11 +168,11 @@ public class MainServiceImpl implements MainService {
     }
 
     private AppUser findOrSaveAppUser(Update update){
-        User telegramUser = update.getMessage().getFrom();
+        var telegramUser = update.getMessage().getFrom();
 
-        var optional = appUserDao.findByTelegramId(telegramUser.getId());
-        if(optional.isEmpty()) {
-            AppUser transientAppUser = AppUser.builder()
+        var appUserOpt = appUserDao.findByTelegramId(telegramUser.getId());
+        if(appUserOpt.isEmpty()) {
+            var transientAppUser = AppUser.builder()
                     .telegramId(telegramUser.getId())
                     .username(telegramUser.getUserName())
                     .firstName(telegramUser.getFirstName())
@@ -176,11 +182,11 @@ public class MainServiceImpl implements MainService {
                     .build();
             return appUserDao.save(transientAppUser);
         }
-        return optional.get();
+        return appUserOpt.get();
     }
 
     private void saveRawData(Update update) {
-        RawData rawData = RawData.builder()
+        var rawData = RawData.builder()
                 .event(update)
                 .build();
         rawDataDao.save(rawData);

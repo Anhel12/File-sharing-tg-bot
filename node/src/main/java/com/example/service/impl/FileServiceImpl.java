@@ -3,42 +3,48 @@ package com.example.service.impl;
 import com.example.dao.AppDocumentDao;
 import com.example.dao.AppPhotoDao;
 import com.example.dao.BinaryContentDao;
+
 import com.example.entity.AppDocument;
 import com.example.entity.AppPhoto;
 import com.example.entity.BinaryContent;
+
 import com.example.exceptions.BigFileException;
 import com.example.exceptions.UploadFileException;
+
 import com.example.service.FileService;
 import com.example.service.enums.LinkType;
-import com.example.utils.CryptoTool;
+
 import com.example.utils.DocCryptoTool;
 import com.example.utils.PhotoCryptoTool;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.json.JSONObject;
+
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriBuilder;
-import org.springframework.web.util.UriTemplate;
+
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
-import static com.example.service.enums.LinkType.GET_DOC;
-
-@Service
 @Slf4j
 @RequiredArgsConstructor
+@Service
 public class FileServiceImpl implements FileService {
+
     @Value("${telegram.bot.token}")
     private String token;
     @Value("${telegram.service.file_info.uri}")
@@ -58,17 +64,17 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public AppDocument processDoc(Message telegramMessage) {
-        Document telegramDoc = telegramMessage.getDocument();
-        String fileId = telegramDoc.getFileId();
-        Long fileSize = telegramDoc.getFileSize();
+        var telegramDoc = telegramMessage.getDocument();
+        var fileId = telegramDoc.getFileId();
+        var fileSize = telegramDoc.getFileSize();
 
         if(fileSize > MAX_FILE_SIZE) {
             throw new BigFileException("file is too big");
         } else {
-            ResponseEntity<String> response = getFilePath(fileId);
+            var response = getFilePath(fileId);
             if(response.getStatusCode() == HttpStatus.OK) {
-                BinaryContent binaryContent = getPersistentBinaryContent(response);
-                AppDocument transientAppDocument = buildTransientAppDoc(telegramDoc, binaryContent);
+                var binaryContent = getPersistentBinaryContent(response);
+                var transientAppDocument = buildTransientAppDoc(telegramDoc, binaryContent);
                 return appDocumentDao.save(transientAppDocument);
             } else {
                 throw new UploadFileException("Bad response from telegram service: " + response);
@@ -78,13 +84,13 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public AppPhoto processPhoto(Message telegramMessage) {
-        int lastPhoto = telegramMessage.getPhoto().size() - 1;
-        PhotoSize telegramPhoto = telegramMessage.getPhoto().get(lastPhoto);
-        String fileId = telegramPhoto.getFileId();
-        ResponseEntity<String> response = getFilePath(fileId);
+        var lastPhoto = telegramMessage.getPhoto().size() - 1;
+        var telegramPhoto = telegramMessage.getPhoto().get(lastPhoto);
+        var fileId = telegramPhoto.getFileId();
+        var response = getFilePath(fileId);
         if(response.getStatusCode() == HttpStatus.OK) {
-            BinaryContent binaryContent = getPersistentBinaryContent(response);
-            AppPhoto transientAppDocument = buildTransientAppPhoto(telegramPhoto, binaryContent);
+            var binaryContent = getPersistentBinaryContent(response);
+            var transientAppDocument = buildTransientAppPhoto(telegramPhoto, binaryContent);
             return appPhotoDao.save(transientAppDocument);
         } else {
             throw new UploadFileException("Bad response from telegram service: " + response);
@@ -92,16 +98,16 @@ public class FileServiceImpl implements FileService {
     }
 
     private BinaryContent getPersistentBinaryContent(ResponseEntity<String> response) {
-        String filePath = getFilePath(response);
-        byte[] fileInBytes = downloadFile(filePath);
-        BinaryContent transientBinaryContent = BinaryContent.builder()
+        var filePath = getFilePath(response);
+        var fileInBytes = downloadFile(filePath);
+        var transientBinaryContent = BinaryContent.builder()
                 .fileAsArrayOfBytes(fileInBytes)
                 .build();
         return binaryContentDao.save(transientBinaryContent);
     }
     private String getFilePath(ResponseEntity<String> response){
-        JSONObject jsonObject = new JSONObject(response.getBody());
-        String filePath = String.valueOf(jsonObject
+        var jsonObject = new JSONObject(response.getBody());
+        var filePath = String.valueOf(jsonObject
                 .getJSONObject("result")
                 .getString("file_path"));
         return filePath;
@@ -125,7 +131,7 @@ public class FileServiceImpl implements FileService {
     }
 
     private byte[] downloadFile(String filePath) {
-        String fullUri = fileStorageUri.replace("{token}", token)
+        var fullUri = fileStorageUri.replace("{token}", token)
                 .replace("{filePath}", filePath);
         URI urlObj = null;
         try {
@@ -143,9 +149,9 @@ public class FileServiceImpl implements FileService {
     }
 
     private ResponseEntity<String> getFilePath(String fileId) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity<String> request = new HttpEntity<>(headers);
+        var restTemplate = new RestTemplate();
+        var headers = new HttpHeaders();
+        var request = new HttpEntity<>(headers);
 
         return restTemplate.exchange(
                 fileInfoUri,
