@@ -1,12 +1,12 @@
 server:
-  port: 8084
+  port: ${MAIL_SERVICE_PORT}
 spring:
   mail:
-    host: smtp.gmail.com
-    port: 587
-    protocol: smtp
-    username: soleniyogurecbot@gmail.com
-    password: ${TG_BOT_EMAIL_PASSWORD}
+    port: ${MAIL_PORT}
+    host: ${MAIL_HOST}
+    protocol: ${MAIL_PROTOCOL}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -15,13 +15,13 @@ spring:
             enable: true
             required: true
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: userok
-    password: p@ssw0rd
+    host: ${RABBIT_HOST}
+    port: ${RABBIT_PORT}
+    username: ${RABBIT_USERNAME}
+    password: ${RABBIT_PASSWORD}
     queues:
-      registration-mail: registration_mail
+      registration-mail: ${RABBIT_REGISTRATION_MAIL_QUEUE}
 
 service:
   activation:
-    uri: http://127.0.0.1:8083/user/activation?id={id}
+    uri: ${ACTIVATION_URI}

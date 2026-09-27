@@ -2,22 +2,22 @@ spring:
   application:
     name: node
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: userok
-    password: p@ssw0rd
+    host: ${RABBIT_HOST}
+    port: ${RABBIT_PORT}
+    username: ${RABBIT_USERNAME}
+    password: ${RABBIT_PASSWORD}
     queues:
-      doc-message-update: doc_message_update
-      photo-message-update: photo_message_update
-      text-message-update: text_message_update
-      answer-message: answer_message
-      registration-mail: registration_mail
+      text-message-update: ${RABBIT_TEXT_MESSAGE_UPDATE_QUEUE}
+      doc-message-update: ${RABBIT_DOC_MESSAGE_UPDATE_QUEUE}
+      photo-message-update: ${RABBIT_PHOTO_MESSAGE_UPDATE_QUEUE}
+      answer-message: ${RABBIT_ANSWER_MESSAGE_QUEUE}
+      registration-mail: ${RABBIT_REGISTRATION_MAIL_QUEUE}
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/pogreb
-    username: userok
-    password: p@ssw0rd
-    driver-class-name: org.postgresql.Driver
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: ${POSTGRES_DRIVER}
   jpa:
     open-in-view: false
     properties:
@@ -27,7 +27,7 @@ spring:
 
 
 server:
-  port: 8082
+  port: ${NODE_PORT}
   tomcat:
     threads:
       max: 1000
@@ -38,21 +38,23 @@ logging:
     name: ${logging.file.path}/node.log
   level:
     root: debug
+  log4j2:
+    rollingpolicy:
+      max-file-size: 5MB
+      max-history: 5
 
 telegram:
   bot:
     token: ${TG_BOT_TOKEN}
   service:
     file_info:
-      uri: https://api.telegram.org/bot{token}/getFile?file_id={fileId}
+      uri: ${TG_BOT_FILE_INFO_URI}
     file_storage:
-      uri: https://api.telegram.org/file/bot{token}/{filePath}
-    mail:
-      uri: http://127.0.0.1:8084/mail/send
+      uri: ${TG_BOT_FILE_STORAGE_URI}
 
 link:
-  address: 127.0.0.1:8083
+  address: ${HOST_URL}:${REST_PORT}
 salt:
-  doc: Dfda;sdkjfDFhasdfouefad234hF9Fl3h4f9s34rh
-  photo: DFHapet423ha;dfh934thsafg094tncv902hfsn3f
-  user: LDfasephsdf;lhe;lkhasdfasdfiyapdfiasd90f87asdfhw349fysahf32rhadf
+  doc: ${SALT_DOC}
+  photo: ${SALT_PHOTO}
+  user: ${SALT_USER}

@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -26,8 +25,6 @@ public class AppUserServiceImpl implements AppUserService {
     private final AppUserDao appUserDao;
     private final UserCryptoTool userCryptoTool;
     private final RabbitTemplate rabbitTemplate;
-    @Value("${telegram.service.mail.uri}")
-    private String mailServiceUri;
     @Value("${spring.rabbitmq.queues.registration-mail}")
     private String registrationMailQueue;
 

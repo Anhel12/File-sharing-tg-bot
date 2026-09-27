@@ -1,12 +1,12 @@
 spring:
   application:
-    name: dispatcher
+    name: rest-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/pogreb
-    username: userok
-    password: p@ssw0rd
-    driver-class-name: org.postgresql.Driver
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: ${POSTGRES_DRIVER}
   jpa:
     open-in-view: false
     properties:
@@ -15,16 +15,20 @@ spring:
         format_sql: true
 
 server:
-  port: 8083
+  port: ${REST_SERVICE_PORT}
 
 logging:
   file:
     path: ./logs
     name: ${logging.file.path}/rest-service.log
   level:
-    root: debug
+    root: warn
+  log4j2:
+    rollingpolicy:
+      max-file-size: 5MB
+      max-history: 5
 
 salt:
-  doc: Dfda;sdkjfDFhasdfouefad234hF9Fl3h4f9s34rh
-  photo: DFHapet423ha;dfh934thsafg094tncv902hfsn3f
-  user: LDfasephsdf;lhe;lkhasdfasdfiyapdfiasd90f87asdfhw349fysahf32rhadf
+  doc: ${SALT_DOC}
+  photo: ${SALT_PHOTO}
+  user: ${SALT_USER}

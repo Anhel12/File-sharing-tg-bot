@@ -20,6 +20,6 @@ public class ActivationController {
         if(res) {
             return ResponseEntity.ok().body("Регистрация успешно завершена!");
         }
-        return ResponseEntity.internalServerError().build();
+        return ResponseEntity.badRequest().body("Неверная ссылка!");
     }
 }

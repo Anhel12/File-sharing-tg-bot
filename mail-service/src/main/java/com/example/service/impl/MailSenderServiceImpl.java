@@ -3,11 +3,13 @@ package com.example.service.impl;
 import com.example.dto.MailParams;
 import com.example.service.MailSenderService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MailSenderServiceImpl implements MailSenderService {
@@ -23,6 +25,7 @@ public class MailSenderServiceImpl implements MailSenderService {
         var subject = "Активация учетной записи";
         var messageBody = getActivationMailBody(mailParams.getId());
         var emailTo = mailParams.getEmailTo();
+        log.debug(String.format("Sending email for mail=[%s]", emailTo));
 
         var mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(emailFrom);

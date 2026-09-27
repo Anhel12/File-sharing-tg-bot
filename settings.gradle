@@ -1,7 +1,6 @@
 rootProject.name = 'File-sharing-tg-bot'
 include 'dispatcher'
 include 'node'
-include 'common-jpa'
 include 'rest-service'
-include 'common-utils'
 include 'mail-service'
+include 'common'

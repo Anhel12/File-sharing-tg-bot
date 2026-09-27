@@ -2,25 +2,25 @@ spring:
   application:
     name: dispatcher
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: userok
-    password: p@ssw0rd
+    host: ${RABBIT_HOST}
+    port: ${RABBIT_PORT}
+    username: ${RABBIT_USERNAME}
+    password: ${RABBIT_PASSWORD}
     queues:
-      doc-message-update: doc_message_update
-      photo-message-update: photo_message_update
-      text-message-update: text_message_update
-      answer-message: answer_message
+      text-message-update: ${RABBIT_TEXT_MESSAGE_UPDATE_QUEUE}
+      doc-message-update: ${RABBIT_DOC_MESSAGE_UPDATE_QUEUE}
+      photo-message-update: ${RABBIT_PHOTO_MESSAGE_UPDATE_QUEUE}
+      answer-message: ${RABBIT_ANSWER_MESSAGE_QUEUE}
 
 telegram:
   bot:
-    username: Soleniy_ogurecBot
+    username: ${TG_BOT_NAME}
     token: ${TG_BOT_TOKEN}
-    uri: https://gurgling-confront-onshore.ngrok-free.dev
+    uri: ${TG_BOT_URI}
 
 
 server:
-  port: 8081
+  port: ${DISPATCHER_PORT}
   ssl:
     enabled: false
 
@@ -30,4 +30,8 @@ logging:
     name: ${logging.file.path}/dispatcher.log
   level:
     root: warn
+  log4j2:
+    rollingpolicy:
+      max-file-size: 5MB
+      max-history: 5
 

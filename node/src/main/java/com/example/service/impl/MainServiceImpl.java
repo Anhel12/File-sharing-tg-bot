@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 
 import static com.example.entity.enums.UserState.BASIC_STATE;
 import static com.example.entity.enums.UserState.WAIT_FOR_EMAIL_STATE;
