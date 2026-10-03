@@ -24,6 +24,8 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+  liquibase:
+    enabled: true
 
 
 server:
@@ -53,7 +55,7 @@ telegram:
       uri: ${TG_BOT_FILE_STORAGE_URI}
 
 link:
-  address: ${HOST_URL}:${REST_PORT}
+  address: ${TG_BOT_URI:http://localhost:8083}
 salt:
   doc: ${SALT_DOC}
   photo: ${SALT_PHOTO}

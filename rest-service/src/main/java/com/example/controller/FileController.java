@@ -19,11 +19,11 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/file")
+@RequestMapping("/api")
 public class FileController {
     private final FileService fileService;
 
-    @GetMapping("/get-doc")
+    @GetMapping("/file/get-doc")
     public void getDoc(@RequestParam("id") String id, HttpServletResponse response) {
         var doc = fileService.getDocument(id);
         if(doc == null) {
@@ -44,7 +44,7 @@ public class FileController {
         }
     }
 
-    @GetMapping("/get-photo")
+    @GetMapping("/file/get-photo")
     public void getPhoto(@RequestParam("id") String id, HttpServletResponse response) {
         var photo = fileService.getPhoto(id);
         if(photo == null) {

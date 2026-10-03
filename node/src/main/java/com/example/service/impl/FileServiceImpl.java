@@ -3,11 +3,9 @@ package com.example.service.impl;
 import com.example.dao.AppDocumentDao;
 import com.example.dao.AppPhotoDao;
 import com.example.dao.BinaryContentDao;
-
 import com.example.entity.AppDocument;
 import com.example.entity.AppPhoto;
 import com.example.entity.BinaryContent;
-
 import com.example.exceptions.BigFileException;
 import com.example.exceptions.UploadFileException;
 
@@ -16,7 +14,6 @@ import com.example.service.enums.LinkType;
 
 import com.example.utils.DocCryptoTool;
 import com.example.utils.PhotoCryptoTool;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -171,6 +168,6 @@ public class FileServiceImpl implements FileService {
         } else {
             hash = photoCryptoTool.hashOf(fileId);
         }
-        return "http://" + linkAddress + "/" + linkType + "?id=" + hash;
+        return linkAddress + "/api/" + linkType + "?id=" + hash;
     }
 }
