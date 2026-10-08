@@ -3,13 +3,13 @@ package com.example.service.impl;
 import com.example.dto.MailParams;
 import com.example.service.MailSenderService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-@Slf4j
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class MailSenderServiceImpl implements MailSenderService {

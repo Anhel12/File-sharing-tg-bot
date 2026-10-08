@@ -15,7 +15,7 @@ import com.example.service.enums.LinkType;
 import com.example.utils.DocCryptoTool;
 import com.example.utils.PhotoCryptoTool;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 import org.json.JSONObject;
 
@@ -37,7 +37,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-@Slf4j
+@Log4j2
 @RequiredArgsConstructor
 @Service
 public class FileServiceImpl implements FileService {

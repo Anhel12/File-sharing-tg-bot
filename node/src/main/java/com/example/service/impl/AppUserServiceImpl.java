@@ -11,13 +11,13 @@ import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-@Slf4j
+@Log4j2
 @RequiredArgsConstructor
 @Service
 public class AppUserServiceImpl implements AppUserService {

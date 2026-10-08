@@ -19,7 +19,7 @@ import com.example.service.enums.LinkType;
 import com.example.service.enums.ServiceCommands;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ import static com.example.entity.enums.UserState.WAIT_FOR_EMAIL_STATE;
 import static com.example.service.enums.ServiceCommands.*;
 
 
-@Slf4j
+@Log4j2
 @RequiredArgsConstructor
 @Service
 public class MainServiceImpl implements MainService {

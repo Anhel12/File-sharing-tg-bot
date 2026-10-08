@@ -5,14 +5,14 @@ import com.example.dispatcher.service.UpdateProducer;
 import com.example.dispatcher.utils.MessageUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-@Slf4j
+@Log4j2
 @RequiredArgsConstructor
 public class UpdateProcessor {
 

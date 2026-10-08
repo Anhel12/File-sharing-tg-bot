@@ -1,15 +1,18 @@
-FROM gradle:9.1-jdk25
+FROM gradle:9.1-jdk25 as build
 LABEL authors="anhel12"
 
 ENV HOME=/home/app
 RUN mkdir -p $HOME
 
-ADD ./settings.gradle /usr/share/gradle/ref/
-ENV GRADLE_SETTINGS=/usr/share/gradle/ref/settings.gradle
+COPY ./settings.gradle /usr/share/gradle/ref/
 
 RUN mkdir -p $HOME/dispatcher
-ADD ./dispatcher/build.gradle $HOME/dispatcher
-ADD ./dispatcher/src $HOME/dispatcher/src
-RUN gradle -p $HOME/dispatcher clean build --debug
+COPY ./dispatcher/build.gradle $HOME/dispatcher
+COPY ./dispatcher/src $HOME/dispatcher/src
+RUN gradle -p $HOME/dispatcher clean build -x test
 
-CMD java -jar $HOME/dispatcher/build/libs/dispatcher-0.0.1.jar
+#Run stage
+FROM eclipse-temurin:25-jdk-alpine
+ARG JAR_FILE=/home/app/dispatcher/build/libs/dispatcher-0.0.1.jar
+COPY --from=build $JAR_FILE /opt/docker-file-sharing-bot/dispatcher.jar
+ENTRYPOINT ["java", "-jar", "/opt/docker-file-sharing-bot/dispatcher.jar"]

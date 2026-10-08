@@ -18,7 +18,6 @@ telegram:
     token: ${TG_BOT_TOKEN}
     uri: ${TG_BOT_URI}
 
-
 server:
   port: ${DISPATCHER_PORT}
   ssl:
