@@ -5,6 +5,8 @@ volumes:
     driver: local
   postgres-data:
     driver: local
+  traefik-certs:
+    driver: local
 
 services:
   dispatcher:
@@ -13,8 +15,8 @@ services:
     build:
       context: ./
       dockerfile: ./dispatcher/Dockerfile
-    ports:
-      - ${DISPATCHER_PORT}:${DISPATCHER_PORT}
+#    ports:
+#      - ${DISPATCHER_PORT}:${DISPATCHER_PORT}
     environment:
       DISPATCHER_PORT: ${DISPATCHER_PORT}
       TG_BOT_NAME: ${TG_BOT_NAME}
@@ -28,6 +30,12 @@ services:
       RABBIT_DOC_MESSAGE_UPDATE_QUEUE: ${RABBIT_DOC_MESSAGE_UPDATE_QUEUE}
       RABBIT_PHOTO_MESSAGE_UPDATE_QUEUE: ${RABBIT_PHOTO_MESSAGE_UPDATE_QUEUE}
       RABBIT_ANSWER_MESSAGE_QUEUE: ${RABBIT_ANSWER_MESSAGE_QUEUE}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.dispatcher.loadbalancer.server.port=${DISPATCHER_PORT}"
+      - "traefik.http.routers.dispatcher.rule=Host(`${HOST_URL}`) && PathPrefix(`/callback`)"
+      - "traefik.http.routers.dispatcher.entrypoints=websecure8"
+      - "traefik.http.routers.dispatcher.tls=true"
     logging:
       driver: 'json-file'
       options:
@@ -82,8 +90,8 @@ services:
     build:
       context: ./
       dockerfile: ./rest-service/Dockerfile
-    ports:
-      - ${REST_SERVICE_PORT}:${REST_SERVICE_PORT}
+#    ports:
+#      - ${REST_SERVICE_PORT}:${REST_SERVICE_PORT}
     environment:
       REST_SERVICE_PORT: ${REST_SERVICE_PORT}
       POSTGRES_URL: ${POSTGRES_URL}
@@ -93,6 +101,12 @@ services:
       SALT_DOC: ${SALT_DOC}
       SALT_PHOTO: ${SALT_PHOTO}
       SALT_USER: ${SALT_USER}
+    labels:
+        - "traefik.enable=true"
+        - "traefik.http.services.rest-service.loadbalancer.server.port=${REST_SERVICE_PORT}"
+        - "traefik.http.routers.rest-service.rule=Host(`${HOST_URL}`) && PathPrefix(`/api`)"
+        - "traefik.http.routers.rest-service.entrypoints=websecure8"
+        - "traefik.http.routers.rest-service.tls=true"
     logging:
       driver: 'json-file'
       options:
@@ -155,7 +169,7 @@ services:
     hostname: postgres
     image: postgres:14.5
     volumes:
-      - /postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     ports:
       - ${POSTGRES_PORT_MAPPING}
     environment:
@@ -168,4 +182,55 @@ services:
       timeout: 5s
       retries: 3
       start_period: 60s
+    restart: unless-stopped
+
+  traefik:
+    container_name: traefik
+    image: traefik:v2.9
+    ports:
+      - 80:80
+      - 8443:8443
+      - 9443:9443
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./data:/etc/traefik/data
+      - /home/pogreb/certs:/etc/traefik/certs
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.traefik.rule=Host(`${HOST_URL}`)"
+      - "traefik.http.routers.traefik.entrypoints=websecure9"
+      - "traefik.http.routers.traefik.tls=true"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8088"
+
+      # Установка пароля для входа в админку
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_USER}:${TRAEFIK_PASSWORD}"
+      - "traefik.http.routers.traefik.middlewares=traefik-auth"
+
+      - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=false"
+    command:
+      - "--api.dashboard=true"
+      - "--ping=true"
+      - "--ping.entrypoint=ping"
+      - "--entryPoints.ping.address=:8888"
+      - "--entryPoints.web.address=:80"
+      - "--entrypoints.websecure8.address=:8443"
+      - "--entrypoints.websecure9.address=:9443"
+      - "--providers.docker=true"
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file.filename=/etc/traefik/data/tls.yml"
+    healthcheck:
+      test: [ "CMD", "wget", "http://127.0.0.1:8888/ping","--spider" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     restart: unless-stopped
