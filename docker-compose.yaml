@@ -228,7 +228,7 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.endpoint=unix:///var/run/docker.sock"
       - "--providers.docker.exposedbydefault=false"
-      - "--providers.file.filename=/etc/traefik/data/tls.yml"
+      - "--providers.file.filename=/etc/traefik/data/tls.yaml"
       - "--certificatesresolvers.letsencrypt.acme.email=soleniyogurecbot@gmail.com"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
