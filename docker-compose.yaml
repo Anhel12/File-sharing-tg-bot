@@ -196,12 +196,14 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./data:/etc/traefik/data
       - /home/pogreb/certs:/etc/traefik/certs
+      - ./letsencrypt:/letsencrypt
     labels:
       - "traefik.enable=true"
 
       - "traefik.http.routers.traefik.rule=Host(`${HOST_URL}`)"
       - "traefik.http.routers.traefik.entrypoints=websecure9"
       - "traefik.http.routers.traefik.tls=true"
+      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.services.traefik.loadbalancer.server.port=8088"
 
@@ -227,6 +229,10 @@ services:
       - "--providers.docker.endpoint=unix:///var/run/docker.sock"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file.filename=/etc/traefik/data/tls.yml"
+      - "--certificatesresolvers.letsencrypt.acme.email=soleniyogurecbot@gmail.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
     healthcheck:
       test: [ "CMD", "wget", "http://127.0.0.1:8888/ping","--spider" ]
       interval: 10s
