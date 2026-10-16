@@ -36,6 +36,7 @@ services:
       - "traefik.http.routers.dispatcher.rule=Host(`${HOST_URL}`) && PathPrefix(`/callback`)"
       - "traefik.http.routers.dispatcher.entrypoints=websecure8"
       - "traefik.http.routers.dispatcher.tls=true"
+      - "traefik.http.routers.dispatcher.tls.certresolver=cloudflare"
     logging:
       driver: 'json-file'
       options:
@@ -107,6 +108,7 @@ services:
         - "traefik.http.routers.rest-service.rule=Host(`${HOST_URL}`) && PathPrefix(`/api`)"
         - "traefik.http.routers.rest-service.entrypoints=websecure8"
         - "traefik.http.routers.rest-service.tls=true"
+        - "traefik.http.routers.rest-service.tls.certresolver=cloudflare"
     logging:
       driver: 'json-file'
       options:
@@ -186,7 +188,7 @@ services:
 
   traefik:
     container_name: traefik
-    image: traefik:v3.6.1
+    image: traefik:latest
     networks:
       proxy:
     ports:
@@ -195,8 +197,8 @@ services:
       - 8443:8443
       - 9443:9443
     environment:
-      - CF-API_EMAIL= ${MAIL_USERNAME}
-      - CF-DNS-API-TOKEN= ${CF-DNS-API-TOKEN}
+      - CF_API_EMAIL= ${MAIL_USERNAME}
+      - CF_DNS_API_TOKEN= ${CF_DNS_API_TOKEN}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
