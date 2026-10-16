@@ -29,7 +29,7 @@ certificatesResolvers:
       email: soleniyogurecbot@gmail.com
       storage: /letsencrypt/acme.json
       dnsChallenge:
-        provider: cloudflare
+        provider: cloudflare.acme
         resolvers:
           - "1.1.1.1:53"
           - "1.0.0.1:53"
