@@ -22,7 +22,7 @@ providers:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
   file:
-    filename: /tls.yaml
+    filename: /tls.yml
 certificatesResolvers:
   cloudflare:
     acme:
