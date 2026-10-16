@@ -200,10 +200,11 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./data:/etc/traefik/data
-      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./data/tls.yaml:/tls.yml:ro
+      - ./traefik.yml:/traefik.yml:ro
       - /home/pogreb/certs:/etc/traefik/certs
-      - ./letsencrypt:/letsencrypt
+      - ./letsencrypt/acme.json:/acme.json
+      - /var/log/traefik:/var/log/traefik
     labels:
       - "traefik.enable=true"
 
