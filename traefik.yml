@@ -22,7 +22,7 @@ providers:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
   file:
-    filename: /etc/traefik/data/tls.yaml
+    filename: /tls.yaml
 certificatesResolvers:
   cloudflare:
     acme:

@@ -203,7 +203,7 @@ services:
       - ./data/tls.yaml:/tls.yml:ro
       - ./traefik.yml:/traefik.yml:ro
       - /home/pogreb/certs:/etc/traefik/certs
-      - ./letsencrypt/acme.json:/acme.json
+      - ./letsencrypt/acme.json:/letsencrypt/acme.json
       - /var/log/traefik:/var/log/traefik
     labels:
       - "traefik.enable=true"
