@@ -187,29 +187,29 @@ services:
   traefik:
     container_name: traefik
     image: traefik:v3.6.1
+    networks:
+      proxy:
     ports:
       - 80:80
+      - 443:443
       - 8443:8443
       - 9443:9443
+    environment:
+      - CF-API_EMAIL= ${MAIL_USERNAME}
+      - CF-DNS-API-TOKEN= ${CLOUDFLARE_TOKEN}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./data:/etc/traefik/data
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
       - /home/pogreb/certs:/etc/traefik/certs
       - ./letsencrypt:/letsencrypt
     labels:
       - "traefik.enable=true"
 
-      - "traefik.http.routers.traefik.rule=Host(`${HOST_URL}`)"
-      - "traefik.http.routers.traefik.entrypoints=websecure9"
-      - "traefik.http.routers.traefik.tls=true"
-      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.${HOST_URL}`)"
+      - "traefik.http.routers.traefik.entrypoints=http"
       - "traefik.http.services.traefik.loadbalancer.server.port=8088"
-
-      # Установка пароля для входа в админку
-      - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_USER}:${TRAEFIK_PASSWORD}"
-      - "traefik.http.routers.traefik.middlewares=traefik-auth"
 
       - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
       - "traefik.http.routers.http-catchall.entrypoints=web"
@@ -217,22 +217,16 @@ services:
 
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=false"
-    command:
-      - "--api.dashboard=true"
-      - "--ping=true"
-      - "--ping.entrypoint=ping"
-      - "--entryPoints.ping.address=:8888"
-      - "--entryPoints.web.address=:80"
-      - "--entrypoints.websecure8.address=:8443"
-      - "--entrypoints.websecure9.address=:9443"
-      - "--providers.docker=true"
-      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.file.filename=/etc/traefik/data/tls.yaml"
-      - "--certificatesresolvers.letsencrypt.acme.email=soleniyogurecbot@gmail.com"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+
+      - "traefik.http.routers.traefik-secure.tls=true"
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_USER}:${TRAEFIK_PASSWORD}"
+      - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.${HOST_URL}`)"
+      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].main=${HOST_URL}"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${HOST_URL}"
+      - "traefik.http.routers.traefik-secure.service=api@internal"
     healthcheck:
       test: [ "CMD", "wget", "http://127.0.0.1:8888/ping","--spider" ]
       interval: 10s
@@ -240,3 +234,7 @@ services:
       retries: 3
       start_period: 5s
     restart: unless-stopped
+networks:
+  proxy:
+    name: proxy
+    external: true
