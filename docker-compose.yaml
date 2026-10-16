@@ -196,7 +196,7 @@ services:
       - 9443:9443
     environment:
       - CF-API_EMAIL= ${MAIL_USERNAME}
-      - CF-DNS-API-TOKEN= ${CLOUDFLARE_TOKEN}
+      - CF-DNS-API-TOKEN= ${CF-DNS-API-TOKEN}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -210,20 +210,14 @@ services:
 
       - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.${HOST_URL}`)"
       - "traefik.http.routers.traefik.entrypoints=http"
-      - "traefik.http.services.traefik.loadbalancer.server.port=8088"
-
-      - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
-      - "traefik.http.routers.http-catchall.entrypoints=web"
-      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
-
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=false"
-      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
-
-      - "traefik.http.routers.traefik-secure.tls=true"
       - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_USER}:${TRAEFIK_PASSWORD}"
-      - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.traefik.middleware=traefik-https-redirect"
+      - "traefik.http.routers.traefik-secure.entrypoints=https"
       - "traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.${HOST_URL}`)"
+      - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
+      - "traefik.http.routers.traefik-secure.tls=true"
       - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
       - "traefik.http.routers.traefik-secure.tls.domains[0].main=${HOST_URL}"
       - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${HOST_URL}"
