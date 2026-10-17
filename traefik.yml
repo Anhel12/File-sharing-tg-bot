@@ -30,9 +30,12 @@ certificatesResolvers:
       storage: /letsencrypt/acme.json
       dnsChallenge:
         provider: cloudflare
-        resolvers:
-          - "1.1.1.1:53"
-          - "1.0.0.1:53"
+        propagation:
+          disableANSChecks: true
+          disableChecks: true
+#        resolvers:
+#          - "1.1.1.1:53"
+#          - "1.0.0.1:53"
 log:
   level: "DEBUG"
   filePath: "/var/log/traefik/traefik.log"
