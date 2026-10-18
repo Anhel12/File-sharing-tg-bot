@@ -23,16 +23,16 @@ providers:
     exposedByDefault: false
   file:
     filename: /tls.yml
-certificatesResolvers:
-  cloudflare:
-    acme:
-      email: soleniyogurecbot@gmail.com
-      storage: /letsencrypt/acme.json
-      dnsChallenge:
-        provider: cloudflare
-        propagation:
-          disableANSChecks: true
-          disableChecks: true
+#certificatesResolvers:
+#  cloudflare:
+#    acme:
+#      email: soleniyogurecbot@gmail.com
+#      storage: /letsencrypt/acme.json
+#      dnsChallenge:
+#        provider: cloudflare
+#        propagation:
+#          disableANSChecks: true
+#          disableChecks: true
 #        resolvers:
 #          - "1.1.1.1:53"
 #          - "1.0.0.1:53"

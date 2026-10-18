@@ -36,7 +36,6 @@ services:
       - "traefik.http.routers.dispatcher.rule=Host(`${HOST_URL}`) && PathPrefix(`/callback`)"
       - "traefik.http.routers.dispatcher.entrypoints=websecure8"
       - "traefik.http.routers.dispatcher.tls=true"
-      - "traefik.http.routers.dispatcher.tls.certresolver=cloudflare"
     logging:
       driver: 'json-file'
       options:
@@ -108,7 +107,6 @@ services:
         - "traefik.http.routers.rest-service.rule=Host(`${HOST_URL}`) && PathPrefix(`/api`)"
         - "traefik.http.routers.rest-service.entrypoints=websecure8"
         - "traefik.http.routers.rest-service.tls=true"
-        - "traefik.http.routers.rest-service.tls.certresolver=cloudflare"
     logging:
       driver: 'json-file'
       options:
@@ -220,7 +218,6 @@ services:
       - "traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.${HOST_URL}`)"
       - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
       - "traefik.http.routers.traefik-secure.tls=true"
-      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
       - "traefik.http.routers.traefik-secure.tls.domains[0].main=${HOST_URL}"
       - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${HOST_URL}"
       - "traefik.http.routers.traefik-secure.service=api@internal"
