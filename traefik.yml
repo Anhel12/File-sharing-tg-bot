@@ -23,19 +23,17 @@ providers:
     exposedByDefault: false
   file:
     filename: /tls.yml
-#certificatesResolvers:
-#  cloudflare:
-#    acme:
-#      email: soleniyogurecbot@gmail.com
-#      storage: /letsencrypt/acme.json
-#      dnsChallenge:
-#        provider: cloudflare
-#        propagation:
-#          disableANSChecks: true
-#          disableChecks: true
-#        resolvers:
-#          - "1.1.1.1:53"
-#          - "1.0.0.1:53"
+certificatesResolvers:
+  cloudflare:
+    acme:
+      email: soleniyogurecbot@gmail.com
+      storage: /letsencrypt/acme.json
+      caServer: https://acme-v02.api.letsencrypt.org/directory
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "8.8.8.8:53"
 log:
   level: "DEBUG"
   filePath: "/var/log/traefik/traefik.log"
