@@ -34,7 +34,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.services.dispatcher.loadbalancer.server.port=${DISPATCHER_PORT}"
       - "traefik.http.routers.dispatcher.rule=Host(`${HOST_URL}`) && PathPrefix(`/callback`)"
-      - "traefik.http.routers.dispatcher.entrypoints=websecure8"
+      - "traefik.http.routers.dispatcher.entrypoints=https"
       - "traefik.http.routers.dispatcher.tls=true"
     logging:
       driver: 'json-file'
