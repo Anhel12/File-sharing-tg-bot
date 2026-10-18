@@ -221,13 +221,6 @@ services:
       - "traefik.http.routers.traefik-secure.tls.domains[0].main=${HOST_URL}"
       - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${HOST_URL}"
       - "traefik.http.routers.traefik-secure.service=api@internal"
-    healthcheck:
-      test: [ "CMD", "wget", "http://127.0.0.1:8888/ping","--spider" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 5s
-    restart: unless-stopped
 networks:
   proxy:
     name: proxy
