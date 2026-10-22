@@ -209,7 +209,7 @@ services:
       - "traefik.enable=true"
 
       - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.${HOST_URL}`)"
-      - "traefik.http.routers.traefik.entrypoints=http"
+      - "traefik.http.routers.traefik.entrypoints=https"
       - "traefik.http.routers.traefik.certresolver=le-tlsalpn"
       - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_USER}:${TRAEFIK_PASSWORD}"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
