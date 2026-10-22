@@ -41,7 +41,7 @@ certificatesResolvers:
           - "8.8.8.8:53"
         propagation:
           disableChecks: true
-        delayBeforeCheck: 60
+          delayBeforeChecks: 60
 log:
   level: "DEBUG"
   filePath: "/var/log/traefik/traefik.log"
