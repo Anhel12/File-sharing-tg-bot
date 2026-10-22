@@ -210,9 +210,9 @@ services:
 
       - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.${HOST_URL}`)"
       - "traefik.http.routers.traefik.entrypoints=https"
-      - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_USER}:${TRAEFIK_PASSWORD}"
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.middleware.traefik-auth.basicauth.users=${TRAEFIK_USER}:${TRAEFIK_PASSWORD}"
+      - "traefik.http.middleware.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middleware.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
       - "traefik.http.routers.traefik.middleware=traefik-https-redirect"
       - "traefik.http.routers.traefik-secure.entrypoints=https"
       - "traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.${HOST_URL}`)"
