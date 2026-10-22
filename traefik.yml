@@ -24,16 +24,11 @@ providers:
   file:
     filename: /tls.yml
 certificatesResolvers:
-  cloudflare:
+  le-tlsalpn:
     acme:
       email: soleniyogurecbot@gmail.com
       storage: /letsencrypt/acme.json
-      caServer: https://acme-v02.api.letsencrypt.org/directory
-      dnsChallenge:
-        provider: cloudflare
-        resolvers:
-          - "1.1.1.1:53"
-          - "8.8.8.8:53"
+      tlsalpnchallenge: true
 log:
   level: "DEBUG"
   filePath: "/var/log/traefik/traefik.log"
