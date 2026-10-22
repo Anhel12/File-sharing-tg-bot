@@ -11,10 +11,15 @@ entryPoints:
           scheme: https
   https:
     address: ":443"
-  websecure8:
+  http-external:
+    address: ":81"
+    http:
+      redirections:
+        entryPoint:
+          to: https-external
+          scheme: https
+  https-external:
     address: ":8443"
-  websecure9:
-    address: ":9443"
 serversTransport:
   insecureSkipVerify: true
 providers:
@@ -24,11 +29,16 @@ providers:
   file:
     filename: /tls.yml
 certificatesResolvers:
-  le-tlsalpn:
+  cloudflare:
     acme:
       email: soleniyogurecbot@gmail.com
       storage: /letsencrypt/acme.json
-      tlsChallenge: true
+      caServer: https://acme-v02.api.letsencrypt.org/directory
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "8.8.8.8:53"
 log:
   level: "DEBUG"
   filePath: "/var/log/traefik/traefik.log"
