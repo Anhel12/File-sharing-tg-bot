@@ -28,7 +28,7 @@ certificatesResolvers:
     acme:
       email: soleniyogurecbot@gmail.com
       storage: /letsencrypt/acme.json
-      tlsalpnchallenge: true
+      tlsChallenge: true
 log:
   level: "DEBUG"
   filePath: "/var/log/traefik/traefik.log"
