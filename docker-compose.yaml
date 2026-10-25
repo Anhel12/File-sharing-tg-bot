@@ -16,6 +16,7 @@ services:
 #    ports:
 #      - ${DISPATCHER_PORT}:${DISPATCHER_PORT}
     networks:
+      - default
       - proxy
     environment:
       DISPATCHER_PORT: ${DISPATCHER_PORT}
@@ -97,6 +98,7 @@ services:
 #    ports:
 #      - ${REST_SERVICE_PORT}:${REST_SERVICE_PORT}
     networks:
+      - default
       - proxy
     environment:
       REST_SERVICE_PORT: ${REST_SERVICE_PORT}
