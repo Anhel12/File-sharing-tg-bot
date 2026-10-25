@@ -17,6 +17,7 @@ telegram:
     username: ${TG_BOT_NAME}
     token: ${TG_BOT_TOKEN}
     uri: ${TG_BOT_URI}
+    port: ${TELEGRAM_PORT}
 
 server:
   port: ${DISPATCHER_PORT}
