@@ -28,6 +28,8 @@ services:
       RABBIT_DOC_MESSAGE_UPDATE_QUEUE: ${RABBIT_DOC_MESSAGE_UPDATE_QUEUE}
       RABBIT_PHOTO_MESSAGE_UPDATE_QUEUE: ${RABBIT_PHOTO_MESSAGE_UPDATE_QUEUE}
       RABBIT_ANSWER_MESSAGE_QUEUE: ${RABBIT_ANSWER_MESSAGE_QUEUE}
+    volumes:
+      - ./logs/dispatcher:/opt/docker-file-sharing-bot/logs
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.dispatcher.loadbalancer.server.port=${DISPATCHER_PORT}"
@@ -71,6 +73,8 @@ services:
       SALT_DOC: ${SALT_DOC}
       SALT_PHOTO: ${SALT_PHOTO}
       SALT_USER: ${SALT_USER}
+    volumes:
+      - ./logs/node:/opt/docker-file-sharing-bot/logs
     logging:
       driver: 'json-file'
       options:
@@ -99,6 +103,8 @@ services:
       SALT_DOC: ${SALT_DOC}
       SALT_PHOTO: ${SALT_PHOTO}
       SALT_USER: ${SALT_USER}
+    volumes:
+      - ./logs/rest-service:/opt/docker-file-sharing-bot/logs
     labels:
         - "traefik.enable=true"
         - "traefik.http.services.rest-service.loadbalancer.server.port=${REST_SERVICE_PORT}"

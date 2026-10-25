@@ -28,7 +28,7 @@ logging:
     path: ./logs
     name: ${logging.file.path}/dispatcher.log
   level:
-    root: warn
+    root: INFO
   log4j2:
     rollingpolicy:
       max-file-size: 5MB

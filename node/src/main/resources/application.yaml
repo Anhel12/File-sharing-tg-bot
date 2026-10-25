@@ -38,7 +38,7 @@ logging:
     path: ./logs
     name: ${logging.file.path}/node.log
   level:
-    root: debug
+    root: INFO
   log4j2:
     rollingpolicy:
       max-file-size: 5MB
