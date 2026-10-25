@@ -38,7 +38,7 @@ public class TelegramBot extends TelegramWebhookBot  {
         updateProcessor.registerBot(this);
         try {
             var setWebhook = SetWebhook.builder()
-                    .url(botUri + botPort)
+                    .url(botUri + ":" + botPort)
                     .build();
             this.setWebhook(setWebhook);
             log.info("Telegram bot успешно зарегистрирован: {}", botUsername);
